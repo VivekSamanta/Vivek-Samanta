@@ -64,11 +64,25 @@
 {% endschema %}
 
 <section class="custom-banner">
-    <h1>{{ section.settings.heading }}</h1>
-    <p>{{ section.settings.subheading }}</p>
-    <a href="{{ section.settings.button_link }}">
-        {{ section.settings.button }}
-    </a>
+    <div class="custom-banner-top-bar">
+        <p>{{ section.settings.top_bar_text }}</p>
+        <a href="{{ section.settings.top_bar_button_link }}">
+            {{ section.settings.top_bar_button }}
+        </a>
+    </div>
+
+    <div class="custom-banner-content">
+        <h1>{{ section.settings.heading }}</h1>
+        <p>{{ section.settings.subheading }}</p>
+        <a href="{{ section.settings.banner_button_link }}">
+            {{ section.settings.banner_button }}
+        </a>
+    </div>
+
+    <div class="custom-banner-image">
+        <img src="{{ section.settings.banner_image }}" width="{{ section.settings.banner_image.width }}" height="{{ section.settings.banner_image.height }}">
+    </div>
+
     <div class="custom-banner-bottom-bar">
         <p>{{ section.settings.bottom_bar_text }}</p>
     </div>
