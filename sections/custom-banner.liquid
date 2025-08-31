@@ -82,16 +82,22 @@
         </a>
     </div>
 
-    <div class="custom-banner-content">
-        <h1>{{ section.settings.heading }}</h1>
-        <p>{{ section.settings.subheading }}</p>
-        <a href="{{ section.settings.banner_button_link }}">
-            {{ section.settings.banner_button }}
-        </a>
-    </div>
-
     <div class="custom-banner-image">
         <img src="{{ section.settings.banner_image}}" width="{{ section.settings.banner_image.width }}" height="{{ section.settings.banner_image.height }}">
+    </div>
+
+    <div class="custom-banner-text">
+        <div class="custom-banner-content">
+            <h1>{{ section.settings.heading }}</h1>
+            <p>{{ section.settings.subheading }}</p>
+            <a href="{{ section.settings.banner_button_link }}">
+                {{ section.settings.banner_button }}
+            </a>
+        </div>
+
+        <div class="custom-banner-image">
+            <img src="{{ section.settings.banner_image}}" width="{{ section.settings.banner_image.width }}" height="{{ section.settings.banner_image.height }}">
+        </div>
     </div>
 
     <div class="custom-banner-bottom-bar">
