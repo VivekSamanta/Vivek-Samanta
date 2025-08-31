@@ -349,12 +349,12 @@
       const selectedOptions = [];
       const optionRadios = popup.querySelectorAll('.variant-group');
       optionRadios.forEach((group, index) => {
-        const checkedRadio = group.querySelector('input[type="radio"]:checked');
+        const checkedRadio = group.querySelector('input[type="dropdown"]:checked');
         if (checkedRadio) {
           selectedOptions[index] = checkedRadio.value;
         } else {
           // If no radio is checked, automatically check the first one
-          const firstRadio = group.querySelector('input[type="radio"]');
+          const firstRadio = group.querySelector('input[type="dropdown"]');
           if(firstRadio){
             firstRadio.checked = true;
             selectedOptions[index] = firstRadio.value;
