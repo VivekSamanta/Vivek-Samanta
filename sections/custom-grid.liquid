@@ -306,7 +306,7 @@
                   <label>${option.name}</label>
                   <div class="variant-radios">
                     ${[...new Set(product.variants.map(v => v.options[index]))].map(value => `
-                      <input type="radio" name="option-${index}" value="${value}" id="option-${index}-${value.replace(/\s+/g, '-')}" data-option-value="${value}">
+                      <input type="dropdown" name="option-${index}" value="${value}" id="option-${index}-${value.replace(/\s+/g, '-')}" data-option-value="${value}">
                       <label for="option-${index}-${value.replace(/\s+/g, '-')}">${value}</label>
                     `).join('')}
                   </div>
