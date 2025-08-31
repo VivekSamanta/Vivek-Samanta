@@ -1,106 +1,339 @@
+<!--
+  This section renders the main hero banner based on the Figma design.
+  - Includes the main site header with brand name.
+  - All text content is editable through the Shopify Theme Customizer.
+  - The background illustration is also a customizable setting.
+-->
+<div class="custom-banner-container">
+  <!-- START: Added Header -->
+  <header class="custom-banner-header">
+    <div class="custom-banner-menu-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </div>
+    <h2 class="custom-banner-brand">
+      <a href="/">{{ section.settings.brand_name }}</a>
+    </h2>
+    <!-- Empty div for spacing on desktop to help with centering -->
+    <div class="custom-banner-header-spacer"></div>
+  </header>
+  <!-- END: Added Header -->
+
+  <div class="custom-banner-top-bar">
+    <p>{{ section.settings.top_bar_text }}</p>
+    {% if section.settings.top_button_text != blank and section.settings.top_button_link != blank %}
+      <a href="{{ section.settings.top_button_link }}" class="custom-banner-button-secondary">
+        {{ section.settings.top_button_text }}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.9167 6.99984L17.9167 11.9998M17.9167 11.9998L12.9167 16.9998M17.9167 11.9998H5.91675" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="custom-banner-content">
+    <div class="custom-banner-text">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.subheading }}</p>
+      {% if section.settings.main_button_text != blank and section.settings.main_button_link != blank %}
+        <a href="{{ section.settings.main_button_link }}" class="custom-banner-button-primary">
+          {{ section.settings.main_button_text }}
+          <span>&rarr;</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if section.settings.background_image != blank %}
+    <div class="custom-banner-background">
+      <img src="{{ section.settings.background_image | image_url: width: 2000 }}"
+           alt="{{ section.settings.background_image.alt | escape }}"
+           loading="lazy"
+           width="{{ section.settings.background_image.width }}"
+           height="{{ section.settings.background_image.height }}">
+    </div>
+  {% endif %}
+
+  <div class="custom-banner-bottom-bar">
+    <p>{{ section.settings.bottom_text }}</p>
+  </div>
+</div>
+
+<style>
+  .custom-banner-container {
+    --text-color: #000;
+    --bg-color: #fff;
+    --primary-button-bg: #000;
+    --primary-button-text: #fff;
+    --secondary-button-bg: #FFD700;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .custom-banner-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    position: relative;
+  }
+  .custom-banner-brand {
+    margin: 0;
+  }
+  .custom-banner-brand a {
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    color: var(--text-color);
+    text-transform: uppercase;
+  }
+  .custom-banner-menu-icon {
+    display: none;
+  }
+  .custom-banner-header-spacer {
+    width: 32px; /* Match icon width */
+    display: none; /* Hide by default */
+  }
+
+  .custom-banner-top-bar,
+  .custom-banner-bottom-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .custom-banner-top-bar {
+    justify-content: space-between;
+  }
+
+  .custom-banner-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 4rem 2rem;
+    text-align: left;
+    position: relative;
+    z-index: 2;
+  }
+
+  .custom-banner-text {
+    max-width: 450px;
+  }
+
+  .custom-banner-text h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    line-height: 1.1;
+  }
+
+  .custom-banner-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 350px;
+    margin: 0 0 2rem;
+  }
+  
+  .custom-banner-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--secondary-button-bg);
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .custom-banner-button-secondary svg {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+  }
+  .custom-banner-button-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .custom-banner-button-secondary:hover svg {
+     transform: translateX(4px);
+  }
+
+  .custom-banner-button-primary {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--primary-button-bg);
+    color: var(--primary-button-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.4s ease-in-out;
+  }
+
+  .custom-banner-button-primary span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    margin-left: 0.5em;
+  }
+
+  .custom-banner-button-primary:hover span {
+    transform: translateX(5px);
+  }
+
+  .custom-banner-background {
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    width: 65%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+  
+  .custom-banner-background img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Responsive Mobile Styles */
+  @media (max-width: 768px) {
+    .custom-banner-header {
+      justify-content: space-between;
+    }
+    .custom-banner-menu-icon {
+      display: block;
+      cursor: pointer;
+    }
+    .custom-banner-brand a {
+      font-size: 1.5rem;
+    }
+    /* Hide the top bar from the Figma mobile design */
+    .custom-banner-top-bar {
+      display: none;
+    }
+
+    .custom-banner-container {
+      padding: 0;
+    }
+    .custom-banner-background {
+      position: relative;
+      width: 100%;
+      left: 0;
+      top: 0;
+      transform: none;
+      margin: -2rem 0;
+      opacity: 0.5;
+    }
+    .custom-banner-content {
+      padding: 2rem 1rem;
+      text-align: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .custom-banner-text {
+      max-width: 100%;
+    }
+    .custom-banner-text h1 {
+      font-size: 2.5rem;
+    }
+    .custom-banner-text p {
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+     .custom-banner-bottom-bar {
+       text-align: center;
+       padding: 1rem;
+       font-size: 0.75rem;
+       line-height: 1.5;
+     }
+  }
+</style>
+
 {% schema %}
 {
-    "name": "Banner",
-    "settings": [
-        {
-            "type": "text",
-            "id": "brand_name",
-            "label": "Brand Name",
-            "default": "TISSO VISON"
-        },
-        {
-            "type": "text",
-            "id": "top_bar_text",
-            "label": "Top Bar Text",
-            "default": "Find the ideal gift for your loved ones."
-        },
-        {
-            "type": "text",
-            "id": "top_bar_button",
-            "label": "Top Bar Button",
-            "default": "Choose gift"
-        },
-        {
-            "type": "url",
-            "id": "top_bar_button_link",
-            "label": "Top Bar Button Link"
-        },
-        {
-            "type": "image_picker",
-            "id": "banner_image",
-            "label": "Banner Image"
-        },
-        {
-            "type": "text",
-            "id": "heading",
-            "label": "Heading",
-            "default": "The Gift Guide"
-        },
-        {
-            "type": "textarea",
-            "id": "subheading",
-            "label": "Subheading",
-            "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
-        },
-        {
-            "type": "text",
-            "id": "banner_button",
-            "label": "Banner Button",
-            "default": "Shop Now"
-        },
-        {
-            "type": "url",
-            "id": "banner_button_link",
-            "label": "Banner Button Link"
-        },
-        {
-            "type": "text",
-            "id": "bottom_bar_text",
-            "label": "Bottom Bar Text",
-            "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
-        },
-    ]
+  "name": "Custom Banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "top_bar_text",
+      "label": "Top bar text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "top_button_text",
+      "label": "Top bar button text",
+      "default": "Choose Gift"
+    },
+    {
+      "type": "url",
+      "id": "top_button_link",
+      "label": "Top bar button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background illustration"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
+    {
+      "type": "text",
+      "id": "main_button_text",
+      "label": "Main button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "text",
+      "id": "bottom_text",
+      "label": "Bottom bar text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO XXL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Banner"
+    }
+  ]
 }
 {% endschema %}
 
-<section class="custom-banner">
-    <header>
-        <div class="custom-banner-menu-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 50 50">
-                <path d="M 5 8 A 2.0002 2.0002 0 1 0 5 12 L 45 12 A 2.0002 2.0002 0 1 0 45 8 L 5 8 z M 5 23 A 2.0002 2.0002 0 1 0 5 27 L 45 27 A 2.0002 2.0002 0 1 0 45 23 L 5 23 z M 5 38 A 2.0002 2.0002 0 1 0 5 42 L 45 42 A 2.0002 2.0002 0 1 0 45 38 L 5 38 z"></path>
-            </svg>
-        </div>
-        <h2 class="custom-banner-brand-name">
-            <a>{{ section.settings.brand_name }}</a>
-        </h2>
-    </header>
-
-    <div class="custom-banner-top-bar">
-        <p>{{ section.settings.top_bar_text }}</p>
-        <a href="{{ section.settings.top_bar_button_link }}">
-            {{ section.settings.top_bar_button }}
-        </a>
-    </div>
-
-    <div class="custom-banner-image">
-        <img src="{{ section.settings.banner_image}}" width="{{ section.settings.banner_image.width }}" height="{{ section.settings.banner_image.height }}">
-    </div>
-
-    <div class="custom-banner-text">
-        <div class="custom-banner-content">
-            <h1>{{ section.settings.heading }}</h1>
-            <p>{{ section.settings.subheading }}</p>
-            <a href="{{ section.settings.banner_button_link }}">
-                {{ section.settings.banner_button }}
-            </a>
-        </div>
-
-        <div class="custom-banner-image">
-            <img src="{{ section.settings.banner_image}}" width="{{ section.settings.banner_image.width }}" height="{{ section.settings.banner_image.height }}">
-        </div>
-    </div>
-
-    <div class="custom-banner-bottom-bar">
-        <p>{{ section.settings.bottom_bar_text }}</p>
-    </div>
-</section>
