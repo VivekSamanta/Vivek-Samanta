@@ -1,37 +1,73 @@
 <!--
   This section renders a grid of six products with a popup modal functionality.
   - The heading is editable.
-  - The six products are selectable from the customizer.
+  - If no products are selected in the customizer, it defaults to showing the first 6 products from the store.
+  - The six products are still selectable from the customizer to override the defaults.
   - The popup is populated dynamically with product data using vanilla JavaScript.
   - The "Add to Cart" button is functional and includes the special conditional logic.
 -->
 <div class="custom-grid-container page-width">
   <h2 class="custom-grid-title">{{ section.settings.heading }}</h2>
   <div class="custom-grid">
-    {% for block in section.blocks %}
-      <div class="custom-grid-item" {{ block.shopify_attributes }}>
-        {%- if block.settings.product != blank -%}
+    {%- comment -%}
+      If blocks are configured by the user, render them.
+      Otherwise, fall back to the first 6 products from the "all" collection as a default.
+    {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      {% for block in section.blocks %}
+        <div class="custom-grid-item" {{ block.shopify_attributes }}>
+          {%- assign product = block.settings.product -%}
+          {%- if product != blank -%}
+            <div class="custom-grid-item-inner">
+              {%- if product.featured_image != null -%}
+                <img src="{{ product.featured_image | image_url: width: 500 }}"
+                     alt="{{ product.featured_image.alt | escape }}"
+                     width="500"
+                     height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
+                     loading="lazy">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+              <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          {%- else -%}
+            <div class="custom-grid-item-inner placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+        </div>
+      {% endfor %}
+    {%- else -%}
+      {%- for product in collections.all.products limit: 6 -%}
+        <div class="custom-grid-item">
           <div class="custom-grid-item-inner">
-            {%- if block.settings.product.featured_image != null -%}
-              <img src="{{ block.settings.product.featured_image | image_url: width: 500 }}" 
-                   alt="{{ block.settings.product.featured_image.alt | escape }}" 
-                   width="500" 
-                   height="{{ 500 | divided_by: block.settings.product.featured_image.aspect_ratio | round }}" 
+            {%- if product.featured_image != null -%}
+              <img src="{{ product.featured_image | image_url: width: 500 }}"
+                   alt="{{ product.featured_image.alt | escape }}"
+                   width="500"
+                   height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
                    loading="lazy">
             {%- else -%}
               {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
-            <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ block.settings.product.handle }}">
+            <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
-        {%- else -%}
-          <div class="custom-grid-item-inner placeholder">
-            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- else -%}
+        {%- comment -%} Fallback for when there are no products in the store at all {%- endcomment -%}
+        {%- for i in (1..6) -%}
+          <div class="custom-grid-item">
+            <div class="custom-grid-item-inner placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
           </div>
-        {%- endif -%}
-      </div>
-    {% endfor %}
+        {%- endfor -%}
+      {%- endfor -%}
+    {%- endif -%}
   </div>
 </div>
 
@@ -435,7 +471,8 @@
 
 {% schema %}
 {
-  "name": "Grid",
+  "name": "Custom Product Grid",
+  "tag": "section",
   "settings": [
     {
       "type": "text",
@@ -460,7 +497,7 @@
   "max_blocks": 6,
   "presets": [
     {
-      "name": "Grid",
+      "name": "Custom Product Grid",
       "blocks": [
         { "type": "product" },
         { "type": "product" },
