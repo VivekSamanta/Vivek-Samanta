@@ -14,18 +14,18 @@
       "disabled": true,
       "settings": {}
     },
-    "custom_banner_vwyP9j": {
+    "custom_banner": {
       "type": "custom-banner",
       "settings": {}
     },
-    "custom_grid_nCjXzF": {
+    "custom_grid": {
       "type": "custom-grid",
       "settings": {}
     }
   },
   "order": [
     "main",
-    "custom_banner_vwyP9j",
-    "custom_grid_nCjXzF"
+    "custom_banner",
+    "custom_grid"
   ]
 }
