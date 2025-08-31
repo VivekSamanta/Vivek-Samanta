@@ -1,9 +1,3 @@
-<!--
-  This section renders the main hero banner based on the Figma design.
-  - Includes the main site header with brand name.
-  - All text content is editable through the Shopify Theme Customizer.
-  - The background illustration is also a customizable setting.
--->
 <div class="custom-banner-container">
   <!-- START: Added Header -->
   <header class="custom-banner-header">
@@ -15,18 +9,17 @@
     </h2>
     <!-- Empty div for spacing on desktop to help with centering -->
     <div class="custom-banner-header-spacer"></div>
+    <div class="custom-banner-top-bar">
+        <p>{{ section.settings.top_bar_text }}</p>
+        {% if section.settings.top_button_text != blank and section.settings.top_button_link != blank %}
+        <a href="{{ section.settings.top_button_link }}" class="custom-banner-button-secondary">
+            {{ section.settings.top_button_text }}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.9167 6.99984L17.9167 11.9998M17.9167 11.9998L12.9167 16.9998M17.9167 11.9998H5.91675" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        {% endif %}
+    </div>
   </header>
   <!-- END: Added Header -->
-
-  <div class="custom-banner-top-bar">
-    <p>{{ section.settings.top_bar_text }}</p>
-    {% if section.settings.top_button_text != blank and section.settings.top_button_link != blank %}
-      <a href="{{ section.settings.top_button_link }}" class="custom-banner-button-secondary">
-        {{ section.settings.top_button_text }}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.9167 6.99984L17.9167 11.9998M17.9167 11.9998L12.9167 16.9998M17.9167 11.9998H5.91675" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-    {% endif %}
-  </div>
 
   <div class="custom-banner-content">
     <div class="custom-banner-text">
