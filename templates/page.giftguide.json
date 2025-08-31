@@ -9,6 +9,11 @@
  */
 {
   "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
     "main-banner": {
       "type": "custom-banner",
       "settings": {}
@@ -19,6 +24,7 @@
     }
   },
   "order": [
+    "main",
     "main-banner",
     "main-grid"
   ]
