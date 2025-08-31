@@ -1,6 +1,6 @@
 <!--
   This section renders a grid of six products with a popup modal functionality.
-  - V4: Hard-codes the icon positions in CSS and removes customizer settings for them.
+  - V6: Updated variant selectors in the popup to match the new design.
 -->
 <div class="custom-grid-container page-width">
   <h2 class="custom-grid-title">{{ section.settings.heading }}</h2>
@@ -13,6 +13,15 @@
       {% for block in section.blocks %}
         <div class="custom-grid-item" {{ block.shopify_attributes }}>
           {%- assign product = block.settings.product -%}
+
+          {%- comment -%}
+            FIX: If no product is selected in the block settings, fall back to a product
+            from the 'all' collection based on the block's position in the loop.
+          {%- endcomment -%}
+          {%- if product == blank -%}
+            {%- assign product = collections.all.products[forloop.index0] -%}
+          {%- endif -%}
+
           {%- if product != blank -%}
             <div class="custom-grid-item-inner">
               {%- if product.featured_image != null -%}
@@ -25,7 +34,7 @@
                 {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
               {%- endif -%}
               <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
-                <svg width="24" height="24" viewBox="4 4 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
             </div>
           {%- else -%}
@@ -49,7 +58,7 @@
               {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
             <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
-              <svg width="24" height="24" viewBox="4 4 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
         </div>
@@ -70,7 +79,9 @@
 <!-- Popup Modal Structure -->
 <div id="product-popup" class="popup-overlay" style="display: none;">
   <div class="popup-content">
-    <button id="close-popup-btn" class="popup-close" aria-label="Close popup">&times;</button>
+    <button id="close-popup-btn" class="popup-close" aria-label="Close popup">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
     <div class="popup-body">
       <!-- Content will be injected by JavaScript -->
     </div>
@@ -109,7 +120,6 @@
     height: 100%;
     object-fit: cover;
   }
-
   .open-popup-btn {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -137,18 +147,16 @@
   .custom-grid-item:nth-child(6) .open-popup-btn { top: 39%; left: 78%; }
   /* END: Hard-coded icon positions */
 
-
   .open-popup-btn:hover {
     transform: translate(-50%, -50%) scale(1.1);
   }
-
   .placeholder, .placeholder-svg {
     width: 100%;
     height: 100%;
     background: #f2f2f2;
   }
 
-  /* Popup styles */
+  /* --- POPUP STYLES --- */
   .popup-overlay {
     position: fixed;
     top: 0;
@@ -163,7 +171,7 @@
   }
   .popup-content {
     background-color: #fff;
-    padding: 30px;
+    padding: 20px;
     width: 90%;
     max-width: 400px;
     position: relative;
@@ -172,30 +180,41 @@
   }
   .popup-close {
     position: absolute;
-    top: 10px;
-    right: 15px;
+    top: 20px;
+    right: 20px;
     background: none;
     border: none;
-    font-size: 2rem;
+    font-size: 1rem;
     cursor: pointer;
-    color: #888;
+    color: #000;
   }
-  .popup-body-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+  .popup-body-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .popup-intro {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .popup-image {
+    flex-basis: 120px;
+    flex-shrink: 0;
   }
   .popup-image img {
     width: 100%;
-    height: 100%;
     aspect-ratio: 1 / 1.1;
     object-fit: cover;
+  }
+  .popup-intro-details {
+    flex-grow: 1;
   }
   .popup-details h3 {
     font-family: 'Jost', sans-serif;
     margin-top: 0;
     font-size: 1.8rem;
-    font-weight: 100;
+    font-weight: 300;
   }
   .popup-price {
     font-family: 'Lustria', serif;
@@ -207,41 +226,117 @@
   .popup-description {
     font-family: 'Jost', sans-serif;
     font-size: 1.1rem;
-    font-weight: 100;
+    font-weight: 300;
     line-height: 1.2;
     color: #000;
   }
-  .popup-variants { margin-top: 20px; }
-  .variant-group { margin-bottom: 15px; }
-  .variant-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-  .variant-radios { display: flex; flex-wrap: wrap; gap: 10px; }
-  .variant-radios label {
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
+  .popup-variants { 
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .variant-group { margin-bottom: 0; }
+  .variant-group > label { 
+    display: block; 
+    margin-bottom: 10px; 
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  /* Color Buttons */
+  .variant-buttons {
+    display: flex;
+    border: 1px solid #ccc;
+  }
+  .variant-buttons .variant-color-label {
+    flex-grow: 1;
+    text-align: center;
+    padding: 12px 10px;
     cursor: pointer;
+    background-color: #fff;
+    color: #000;
+    border-right: 1px solid #ccc;
     transition: all 0.2s ease;
+    position: relative;
+    padding-left: 25px; /* Space for color bar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .variant-radios input { display: none; }
-  .variant-radios input:checked + label {
-    background-color: #000;
-    color: #fff;
-    border-color: #000;
+  .variant-buttons .variant-color-label:last-child {
+    border-right: none;
   }
+  .variant-buttons .variant-color-label::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background-color: grey; /* Default color */
+  }
+  /* Add specific color styles */
+  .variant-color-label.color-red::before { background-color: red; }
+  .variant-color-label.color-grey::before { background-color: grey; }
+  .variant-color-label.color-black::before { background-color: black; }
+  .variant-color-label.color-white::before { background-color: #eee; border: 1px solid #ccc; }
+
+
+  .variant-buttons input { display: none; }
+  .variant-buttons input:checked + label {
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px #000;
+    z-index: 2;
+  }
+
+  /* Size Dropdown */
+  .variant-select-wrapper {
+    position: relative;
+  }
+  .variant-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .variant-select-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #000;
+    pointer-events: none;
+  }
+
   .add-to-cart-btn {
     width: 100%;
     padding: 15px;
     background-color: #000;
     color: #fff;
-    border: none;
+    border: 1px solid #000;
     font-size: 1.2rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s;
+    margin-top: 10px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .add-to-cart-btn:hover { background-color: #333; }
-  .add-to-cart-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+  .add-to-cart-btn:disabled { background-color: #ccc; border-color: #ccc; cursor: not-allowed; }
   .popup-message { margin-top: 15px; text-align: center; color: green; font-weight: 500; }
   
   /* Responsive Mobile Styles */
@@ -254,10 +349,7 @@
       gap: 15px;
     }
     .popup-content {
-      padding: 20px;
-    }
-    .popup-body-grid {
-      grid-template-columns: 1fr;
+        max-width: 320px;
     }
   }
 </style>
@@ -271,66 +363,89 @@
 
     let currentProductData = null;
 
-    // --- Functions to handle the popup ---
-    
-    function openPopup() {
-      popup.style.display = 'flex';
-    }
-
+    function openPopup() { popup.style.display = 'flex'; }
     function closePopup() {
       popup.style.display = 'none';
-      popupBody.innerHTML = ''; // Clear content on close
+      popupBody.innerHTML = '';
       currentProductData = null;
     }
 
-    // --- Function to fetch product data and populate the popup ---
-    
     async function loadProductIntoPopup(handle) {
       try {
-        // Show a loading state
         popupBody.innerHTML = '<p>Loading...</p>';
         openPopup();
         
-        // Fetch product data from Shopify's JSON API
         const response = await fetch(`/products/${handle}.js`);
         if (!response.ok) throw new Error('Product not found');
         const product = await response.json();
         currentProductData = product;
 
-        // Build the HTML for the popup content
         let variantsHtml = '';
-        if (product.options.length > 1 || (product.options.length === 1 && product.options[0].name !== 'Title')) {
-           product.options.forEach((option, index) => {
-               variantsHtml += `
-                <div class="variant-group" data-option-index="${index}">
-                  <label>${option.name}</label>
-                  <div class="variant-radios">
-                    ${[...new Set(product.variants.map(v => v.options[index]))].map(value => `
-                      <input type="radio" name="option-${index}" value="${value}" id="option-${index}-${value.replace(/\s+/g, '-')}" data-option-value="${value}">
-                      <label for="option-${index}-${value.replace(/\s+/g, '-')}">${value}</label>
-                    `).join('')}
-                  </div>
-                </div>
-               `;
-           });
-        }
-
+        // Use options_with_values for a more robust way to get all available option values
+        product.options_with_values.forEach(option => {
+            const optionName = option.name.toLowerCase();
+            // Render buttons for Color
+            if (optionName === 'color') {
+                variantsHtml += `
+                  <div class="variant-group" data-option-index="${option.position - 1}">
+                    <label>${option.name}</label>
+                    <div class="variant-buttons">
+                      ${option.values.map(value => `
+                        <input type="radio" name="option-${option.position - 1}" value="${value.title}" id="option-${option.position - 1}-${value.title.replace(/\s+/g, '-')}">
+                        <label for="option-${option.position - 1}-${value.title.replace(/\s+/g, '-')}" class="variant-color-label color-${value.title.toLowerCase()}"><span>${value.title}</span></label>
+                      `).join('')}
+                    </div>
+                  </div>`;
+            }
+            // Render dropdown for Size
+            else if (optionName === 'size') {
+                 variantsHtml += `
+                  <div class="variant-group" data-option-index="${option.position - 1}">
+                    <label>${option.name}</label>
+                    <div class="variant-select-wrapper">
+                      <select class="variant-select" name="option-${option.position - 1}">
+                        <option value="">Choose your size</option>
+                        ${option.values.map(value => `<option value="${value.title}">${value.title}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>`;
+            }
+            // Fallback for other potential options
+            else {
+                 variantsHtml += `
+                  <div class="variant-group" data-option-index="${option.position - 1}">
+                    <label>${option.name}</label>
+                    <div class="variant-select-wrapper">
+                      <select class="variant-select" name="option-${option.position - 1}">
+                        <option value="">Select ${option.name}</option>
+                        ${option.values.map(value => `<option value="${value.title}">${value.title}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>`;
+            }
+        });
+        
         const productHtml = `
-          <div class="popup-body-grid">
-            <div class="popup-image">
-              <img src="${product.featured_image}" alt="${product.title}">
-            </div>
-            <div class="popup-details">
-              <h3>${product.title}</h3>
-              <div class="popup-price" id="popup-price"></div>
-              <div class="popup-description">${product.description}</div>
+          <div class="popup-body-flex">
+            <div class="popup-intro">
+              <div class="popup-image">
+                <img src="${product.featured_image}" alt="${product.title}">
+              </div>
+              <div class="popup-intro-details">
+                <h3>${product.title}</h3>
+                <div class="popup-price" id="popup-price"></div>
+                <div class="popup-description">${product.description}</div>
+              </div>
             </div>
             <form id="popup-product-form">
-                <div class="popup-variants">${variantsHtml}</div>
-                <input type="hidden" name="id" id="popup-variant-id" value="${product.variants[0].id}">
-                <button type="submit" class="add-to-cart-btn" id="popup-add-to-cart-btn">Add to Cart</button>
-                <div class="popup-message" id="popup-message"></div>
-              </form>
+              <div class="popup-variants">${variantsHtml}</div>
+              <input type="hidden" name="id" id="popup-variant-id" value="">
+              <button type="submit" class="add-to-cart-btn" id="popup-add-to-cart-btn">
+                <span>ADD TO CART</span>
+                <svg width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 1L19 6M19 6L14.5 11M19 6H1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="popup-message" id="popup-message"></div>
+            </form>
           </div>
         `;
         popupBody.innerHTML = productHtml;
@@ -343,90 +458,79 @@
       }
     }
 
-    // --- Functions to handle variant selection ---
-    
     function updateVariantState() {
       const selectedOptions = [];
-      const optionRadios = popup.querySelectorAll('.variant-group');
-      optionRadios.forEach((group, index) => {
-        const checkedRadio = group.querySelector('input[type="radio"]:checked');
-        if (checkedRadio) {
-          selectedOptions[index] = checkedRadio.value;
+      const optionGroups = popup.querySelectorAll('.variant-group');
+      optionGroups.forEach(group => {
+        const index = parseInt(group.dataset.optionIndex);
+        const radio = group.querySelector('input[type="radio"]:checked');
+        const select = group.querySelector('select');
+        
+        if (radio) {
+          selectedOptions[index] = radio.value;
+        } else if (select) {
+          selectedOptions[index] = select.value;
         } else {
-          // If no radio is checked, automatically check the first one
-          const firstRadio = group.querySelector('input[type="radio"]');
-          if(firstRadio){
-            firstRadio.checked = true;
-            selectedOptions[index] = firstRadio.value;
-          }
+            // Auto-select the first color radio button if none is selected yet
+            const firstRadio = group.querySelector('input[type="radio"]');
+            if(firstRadio) {
+                firstRadio.checked = true;
+                selectedOptions[index] = firstRadio.value;
+            }
         }
       });
       
-      const matchedVariant = currentProductData.variants.find(variant => {
-        return selectedOptions.every((option, index) => variant.options[index] === option);
-      });
+      const matchedVariant = currentProductData.variants.find(variant => 
+        variant.options.every((optionValue, index) => optionValue === selectedOptions[index])
+      );
 
       const priceEl = document.getElementById('popup-price');
       const variantIdEl = document.getElementById('popup-variant-id');
       const addToCartBtn = document.getElementById('popup-add-to-cart-btn');
 
       if (matchedVariant) {
-        priceEl.textContent = new Intl.NumberFormat(undefined, { style: 'currency', currency: '{{ cart.currency.iso_code }}' }).format(matchedVariant.price / 100);
+        priceEl.textContent = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(matchedVariant.price / 100);
         variantIdEl.value = matchedVariant.id;
         addToCartBtn.disabled = !matchedVariant.available;
-        addToCartBtn.textContent = matchedVariant.available ? 'Add to Cart' : 'Sold Out';
+        addToCartBtn.querySelector('span').textContent = matchedVariant.available ? 'ADD TO CART' : 'SOLD OUT';
       } else {
-        // A combination is selected that doesn't exist
-        priceEl.textContent = '';
+        priceEl.textContent = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(currentProductData.price / 100);
         variantIdEl.value = '';
         addToCartBtn.disabled = true;
-        addToCartBtn.textContent = 'Unavailable';
+        addToCartBtn.querySelector('span').textContent = 'UNAVAILABLE';
       }
     }
-
-    // --- Function to handle form submission (Add to Cart) ---
 
     async function handleAddToCart(event) {
       event.preventDefault();
       const form = event.target;
       const addToCartBtn = form.querySelector('button[type="submit"]');
       const messageEl = document.getElementById('popup-message');
-      
       const selectedVariantId = document.getElementById('popup-variant-id').value;
       if (!selectedVariantId) return;
 
       addToCartBtn.disabled = true;
-      addToCartBtn.textContent = 'Adding...';
+      addToCartBtn.querySelector('span').textContent = 'ADDING...';
       messageEl.textContent = '';
 
-      // Prepare items for the cart API
       let itemsToAdd = [{ id: selectedVariantId, quantity: 1 }];
 
-      // ** SPECIAL LOGIC **
-      // Check if the added product has variants "Black" and "Medium"
       const selectedVariant = currentProductData.variants.find(v => v.id == selectedVariantId);
       const options = selectedVariant.options.map(opt => opt.toLowerCase());
 
       if (options.includes('black') && options.includes('medium')) {
           try {
-            // We need the variant ID for "Soft Winter Jacket".
-            // Fetching it dynamically makes the code more robust.
             const jacketResponse = await fetch('/products/soft-winter-jacket.js');
             if (jacketResponse.ok) {
               const jacketProduct = await jacketResponse.json();
-              // Assuming we add the first available variant of the jacket
               const jacketVariant = jacketProduct.variants.find(v => v.available);
               if (jacketVariant) {
                 itemsToAdd.push({ id: jacketVariant.id, quantity: 1 });
-                 console.log('Adding special product: Soft Winter Jacket');
               }
             }
-          } catch(e) {
-            console.error("Could not add special product", e);
-          }
+          } catch(e) { console.error("Could not add special product", e); }
       }
 
-      // Use the Shopify Cart AJAX API
       try {
         const response = await fetch('/cart/add.js', {
           method: 'POST',
@@ -436,56 +540,35 @@
         
         if (response.ok) {
           messageEl.textContent = 'Added to cart successfully!';
-          // You could also update a cart icon or drawer here
+          setTimeout(() => { closePopup() }, 1500);
         } else {
           const errorData = await response.json();
           messageEl.textContent = errorData.description || 'Error adding to cart.';
           messageEl.style.color = 'red';
+          addToCartBtn.disabled = false;
+          updateVariantState(); // Reset button text
         }
-
       } catch (error) {
-        console.error('Error adding to cart:', error);
         messageEl.textContent = 'Could not add to cart.';
         messageEl.style.color = 'red';
-      } finally {
         addToCartBtn.disabled = false;
-        addToCartBtn.textContent = 'Add to Cart';
-        setTimeout(() => { closePopup() }, 2000); // Close popup after 2 seconds
+        updateVariantState();
       }
     }
 
-
-    // --- Add Event Listeners ---
+    openBtns.forEach(btn => btn.addEventListener('click', () => loadProductIntoPopup(btn.dataset.productHandle)));
     
-    openBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const handle = btn.dataset.productHandle;
-        if (handle) {
-          loadProductIntoPopup(handle);
-        }
-      });
-    });
-
     function addPopupEventListeners() {
-       const form = document.getElementById('popup-product-form');
-       form.addEventListener('submit', handleAddToCart);
-
-       const variantRadios = popup.querySelectorAll('.variant-radios input');
-       variantRadios.forEach(radio => {
-          radio.addEventListener('change', updateVariantState);
+       document.getElementById('popup-product-form').addEventListener('submit', handleAddToCart);
+       popup.querySelectorAll('.variant-group input, .variant-group select').forEach(el => {
+          el.addEventListener('change', updateVariantState);
        });
     }
 
     closeBtn.addEventListener('click', closePopup);
-    popup.addEventListener('click', (event) => {
-      // Close if clicking on the overlay but not the content
-      if (event.target === popup) {
-        closePopup();
-      }
-    });
+    popup.addEventListener('click', e => { if (e.target === popup) closePopup(); });
   });
 </script>
-
 
 {% schema %}
 {
@@ -496,7 +579,7 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Tisso vison in the wild"
+      "default": "TISSO VISON in the wild"
     }
   ],
   "blocks": [
@@ -528,3 +611,4 @@
   ]
 }
 {% endschema %}
+
