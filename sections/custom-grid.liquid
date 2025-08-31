@@ -318,13 +318,13 @@
               <h3>${product.title}</h3>
               <div class="popup-price" id="popup-price"></div>
               <div class="popup-description">${product.description}</div>
-              <form id="popup-product-form">
+            </div>
+            <form id="popup-product-form">
                 <div class="popup-variants">${variantsHtml}</div>
                 <input type="hidden" name="id" id="popup-variant-id" value="${product.variants[0].id}">
                 <button type="submit" class="add-to-cart-btn" id="popup-add-to-cart-btn">Add to Cart</button>
                 <div class="popup-message" id="popup-message"></div>
               </form>
-            </div>
           </div>
         `;
         popupBody.innerHTML = productHtml;
