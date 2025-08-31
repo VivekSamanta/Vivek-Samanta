@@ -1,78 +1,41 @@
 <!--
   This section renders a grid of six products with a popup modal functionality.
-  - V6: Updated variant selectors in the popup to match the new design.
+  - V7: Simplifies Liquid logic and adds more detailed JS error logging.
 -->
 <div class="custom-grid-container page-width">
   <h2 class="custom-grid-title">{{ section.settings.heading }}</h2>
   <div class="custom-grid">
-    {%- comment -%}
-      If blocks are configured by the user, render them.
-      Otherwise, fall back to the first 6 products from the "all" collection as a default.
-    {%- endcomment -%}
-    {%- if section.blocks.size > 0 -%}
-      {% for block in section.blocks %}
-        <div class="custom-grid-item" {{ block.shopify_attributes }}>
-          {%- assign product = block.settings.product -%}
+    {% for block in section.blocks %}
+      <div class="custom-grid-item" {{ block.shopify_attributes }}>
+        {%- comment -%}
+          If a product is selected in the block, use it.
+          Otherwise, fall back to a product from the 'all' collection based on the block's position.
+        {%- endcomment -%}
+        {%- assign product = block.settings.product | default: collections.all.products[forloop.index0] -%}
 
-          {%- comment -%}
-            FIX: If no product is selected in the block settings, fall back to a product
-            from the 'all' collection based on the block's position in the loop.
-          {%- endcomment -%}
-          {%- if product == blank -%}
-            {%- assign product = collections.all.products[forloop.index0] -%}
-          {%- endif -%}
-
-          {%- if product != blank -%}
-            <div class="custom-grid-item-inner">
-              {%- if product.featured_image != null -%}
-                <img src="{{ product.featured_image | image_url: width: 500 }}"
-                     alt="{{ product.featured_image.alt | escape }}"
-                     width="500"
-                     height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
-                     loading="lazy">
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-              {%- endif -%}
-              <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-            </div>
-          {%- else -%}
-            <div class="custom-grid-item-inner placeholder">
-              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-            </div>
-          {%- endif -%}
-        </div>
-      {% endfor %}
-    {%- else -%}
-      {%- for product in collections.all.products limit: 6 -%}
-        <div class="custom-grid-item">
+        {%- if product != blank -%}
           <div class="custom-grid-item-inner">
             {%- if product.featured_image != null -%}
-              <img src="{{ product.featured_image | image_url: width: 500 }}"
-                   alt="{{ product.featured_image.alt | escape }}"
-                   width="500"
-                   height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
-                   loading="lazy">
+              <img
+                src="{{ product.featured_image | image_url: width: 500 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                width="500"
+                height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
+                loading="lazy">
             {%- else -%}
               {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
             <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </button>
           </div>
-        </div>
-      {%- else -%}
-        {%- comment -%} Fallback for when there are no products in the store at all {%- endcomment -%}
-        {%- for i in (1..6) -%}
-          <div class="custom-grid-item">
-            <div class="custom-grid-item-inner placeholder">
-              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-            </div>
+        {%- else -%}
+          <div class="custom-grid-item-inner placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
           </div>
-        {%- endfor -%}
-      {%- endfor -%}
-    {%- endif -%}
+        {%- endif -%}
+      </div>
+    {% endfor %}
   </div>
 </div>
 
@@ -80,7 +43,7 @@
 <div id="product-popup" class="popup-overlay" style="display: none;">
   <div class="popup-content">
     <button id="close-popup-btn" class="popup-close" aria-label="Close popup">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
     <div class="popup-body">
       <!-- Content will be injected by JavaScript -->
@@ -371,20 +334,24 @@
     }
 
     async function loadProductIntoPopup(handle) {
+      if (!handle) {
+        console.error("Popup opened with no product handle.");
+        return;
+      }
       try {
         popupBody.innerHTML = '<p>Loading...</p>';
         openPopup();
         
         const response = await fetch(`/products/${handle}.js`);
-        if (!response.ok) throw new Error('Product not found');
+        if (!response.ok) {
+           throw new Error(`HTTP error ${response.status} for product handle: ${handle}. The product may not be published on the Online Store sales channel.`);
+        }
         const product = await response.json();
         currentProductData = product;
 
         let variantsHtml = '';
-        // Use options_with_values for a more robust way to get all available option values
         product.options_with_values.forEach(option => {
             const optionName = option.name.toLowerCase();
-            // Render buttons for Color
             if (optionName === 'color') {
                 variantsHtml += `
                   <div class="variant-group" data-option-index="${option.position - 1}">
@@ -397,7 +364,6 @@
                     </div>
                   </div>`;
             }
-            // Render dropdown for Size
             else if (optionName === 'size') {
                  variantsHtml += `
                   <div class="variant-group" data-option-index="${option.position - 1}">
@@ -410,7 +376,6 @@
                     </div>
                   </div>`;
             }
-            // Fallback for other potential options
             else {
                  variantsHtml += `
                   <div class="variant-group" data-option-index="${option.position - 1}">
@@ -471,7 +436,6 @@
         } else if (select) {
           selectedOptions[index] = select.value;
         } else {
-            // Auto-select the first color radio button if none is selected yet
             const firstRadio = group.querySelector('input[type="radio"]');
             if(firstRadio) {
                 firstRadio.checked = true;
@@ -546,7 +510,7 @@
           messageEl.textContent = errorData.description || 'Error adding to cart.';
           messageEl.style.color = 'red';
           addToCartBtn.disabled = false;
-          updateVariantState(); // Reset button text
+          updateVariantState();
         }
       } catch (error) {
         messageEl.textContent = 'Could not add to cart.';
