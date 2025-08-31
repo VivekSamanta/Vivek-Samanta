@@ -1,6 +1,6 @@
 <!--
   This section renders a grid of six products with a popup modal functionality.
-  - V2: Removes image hover animation and makes the popup button always visible on the image.
+  - V3: Adds customizer controls for icon positioning and makes heading alignment responsive.
 -->
 <div class="custom-grid-container page-width">
   <h2 class="custom-grid-title">{{ section.settings.heading }}</h2>
@@ -24,7 +24,7 @@
               {%- else -%}
                 {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
               {%- endif -%}
-              <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
+              <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}" style="top: {{ block.settings.icon_top }}%; left: {{ block.settings.icon_left }}%;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
             </div>
@@ -48,7 +48,7 @@
             {%- else -%}
               {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
-            <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}">
+            <button type="button" class="open-popup-btn" aria-label="Open product details" data-product-handle="{{ product.handle }}" style="top: 50%; left: 50%;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
@@ -88,7 +88,7 @@
     padding-bottom: 50px;
   }
   .custom-grid-title {
-    text-align: center;
+    text-align: left;
     font-size: 2rem;
     margin-bottom: 40px;
     font-weight: 500;
@@ -112,8 +112,7 @@
 
   .open-popup-btn {
     position: absolute;
-    bottom: 15px;
-    right: 15px;
+    transform: translate(-50%, -50%);
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 50%;
@@ -130,7 +129,7 @@
   }
 
   .open-popup-btn:hover {
-    transform: scale(1.1);
+    transform: translate(-50%, -50%) scale(1.1);
   }
 
   .placeholder, .placeholder-svg {
@@ -231,6 +230,9 @@
   
   /* Responsive Mobile Styles */
   @media (max-width: 768px) {
+    .custom-grid-title {
+      text-align: center;
+    }
     .custom-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 15px;
@@ -281,7 +283,7 @@
 
         // Build the HTML for the popup content
         let variantsHtml = '';
-        if (product.options.length > 1 || (product.options.length === 1 && product.options[0] !== 'Title')) {
+        if (product.options.length > 1 || (product.options.length === 1 && product.options[0].name !== 'Title')) {
            product.options.forEach((option, index) => {
                variantsHtml += `
                 <div class="variant-group" data-option-index="${index}">
@@ -334,6 +336,13 @@
         const checkedRadio = group.querySelector('input[type="radio"]:checked');
         if (checkedRadio) {
           selectedOptions[index] = checkedRadio.value;
+        } else {
+          // If no radio is checked, automatically check the first one
+          const firstRadio = group.querySelector('input[type="radio"]');
+          if(firstRadio){
+            firstRadio.checked = true;
+            selectedOptions[index] = firstRadio.value;
+          }
         }
       });
       
@@ -346,7 +355,7 @@
       const addToCartBtn = document.getElementById('popup-add-to-cart-btn');
 
       if (matchedVariant) {
-        priceEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(matchedVariant.price / 100);
+        priceEl.textContent = new Intl.NumberFormat(undefined, { style: 'currency', currency: '{{ cart.currency.iso_code }}' }).format(matchedVariant.price / 100);
         variantIdEl.value = matchedVariant.id;
         addToCartBtn.disabled = !matchedVariant.available;
         addToCartBtn.textContent = matchedVariant.available ? 'Add to Cart' : 'Sold Out';
@@ -483,6 +492,26 @@
           "type": "product",
           "id": "product",
           "label": "Product"
+        },
+        {
+          "type": "range",
+          "id": "icon_top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Icon Top Position",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "icon_left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Icon Left Position",
+          "default": 50
         }
       ]
     }
