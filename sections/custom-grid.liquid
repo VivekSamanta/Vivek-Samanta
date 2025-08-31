@@ -1,10 +1,6 @@
 <!--
   This section renders a grid of six products with a popup modal functionality.
-  - The heading is editable.
-  - If no products are selected in the customizer, it defaults to showing the first 6 products from the store.
-  - The six products are still selectable from the customizer to override the defaults.
-  - The popup is populated dynamically with product data using vanilla JavaScript.
-  - The "Add to Cart" button is functional and includes the special conditional logic.
+  - V2: Removes image hover animation and makes the popup button always visible on the image.
 -->
 <div class="custom-grid-container page-width">
   <h2 class="custom-grid-title">{{ section.settings.heading }}</h2>
@@ -112,16 +108,12 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
   }
-  .custom-grid-item-inner:hover img {
-    transform: scale(1.05);
-  }
+
   .open-popup-btn {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    bottom: 15px;
+    right: 15px;
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 50%;
@@ -132,14 +124,15 @@
     align-items: center;
     justify-content: center;
     color: #000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-    opacity: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    opacity: 1; /* Always visible */
   }
-  .custom-grid-item-inner:hover .open-popup-btn {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1);
+
+  .open-popup-btn:hover {
+    transform: scale(1.1);
   }
+
   .placeholder, .placeholder-svg {
     width: 100%;
     height: 100%;
