@@ -11,9 +11,15 @@
   "sections": {
     "banner": {
       "type": "custom-banner",
-      "settings": {
-      }
+      "settings": {}
+    },
+    "grid": {
+      "type": "custom-grid",
+      "settings": {}
     }
   },
-  "order": ["banner"]
+  "order": [
+    "banner",
+    "grid"
+  ]
 }
