@@ -9,17 +9,17 @@
  */
 {
   "sections": {
-    "banner": {
+    "main-banner": {
       "type": "custom-banner",
       "settings": {}
     },
-    "grid": {
+    "main-grid": {
       "type": "custom-grid",
       "settings": {}
     }
   },
   "order": [
-    "banner",
-    "grid"
+    "main-banner",
+    "main-grid"
   ]
 }
