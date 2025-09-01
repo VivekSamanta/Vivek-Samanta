@@ -7,7 +7,7 @@
         {% assign product = all_products[block.settings.product] %}
         {% if product != blank %}
           <div class="custom-grid-card">
-            <img src="{{ product.featured_image | img_url: '400x' }}" alt="{{ product.title }}" />
+            <img src="{{ product.featured_image | image_url: '400x' }}" alt="{{ product.title }}" width="100" height="100" />
             <h3>{{ product.title }}</h3>
             <button class="quick-add-btn" data-product-handle="{{ block.settings.product }}">
               Quick Add
@@ -24,7 +24,7 @@
   <div class="popup-card">
     <button id="popupClose" class="popup-close">×</button>
     <div class="popup-content">
-      <img id="popupProductImage" src="" alt="" class="popup-image" />
+      <img id="popupProductImage" src="" alt="" class="popup-image" width="20" height="20" />
       <div class="popup-details">
         <h2 id="popupProductTitle"></h2>
         <p id="popupProductPrice"></p>
